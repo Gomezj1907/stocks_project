@@ -1,14 +1,92 @@
-# Stock Index Analyzer 📈
+✅ README.md
 
-This project scrapes tickers from global stock indices, downloads historical price data, calculates log returns, and publishes the results to Google Sheets.
+# 📈 Global Stock Index Tracker
 
-## Features
-- Scrapes from Dow Jones, S&P 500, FTSE 100, Nikkei 225, etc.
-- Calculates average log returns
-- Google Sheets integration for output
-- Identifies top/bottom performers
+This Python project tracks the performance of stocks across major global indices, fetching data from Yahoo Finance and publishing it to Google Sheets. The goal is to analyze top and bottom performers over time using a fully automated pipeline.
 
-## Setup
-1. Clone the repo
-2. Install dependencies
-3. Add your Google credentials to `config/credentials.json`
+---
+
+## 🌍 Tracked Indices
+
+- 🇺🇸 Dow Jones Industrial Average (DJI)
+- 🇺🇸 S&P 500
+- 🇯🇵 Nikkei 225
+- 🇸🇬 Straits Times Index (STI)
+- 🇬🇧 FTSE 100
+- 🇭🇰 Hang Seng Index (HSI)
+
+---
+
+## 🔧 Project Structure
+
+.
+├── main.py                       # Main script to scrape and publish
+├── scraping/                    # Individual modules to scrape index tickers
+│   ├── scrape_dow_jones.py
+│   ├── scrape_sp500.py
+│   └── ...
+├── sheets/
+│   └── upload_to_sheets.py      # Publishes dataframes to Google Sheets
+├── services/
+│   └── fetch_prices.py          # Gets historical price data
+├── utils/
+│   └── analysis_utils.py        # Tools for calculating returns, rankings
+├── data/
+│   └── tickers_por_pais.json    # Contains index tickers by country
+├── config/
+│   └── credentials.json         # GSheets service credentials (ignored)
+├── .gitignore
+├── README.md
+└── requirements.txt             # Dependencies
+
+⚙️ Setup
+
+    Clone the repo
+
+git clone https://github.com/YOUR_USERNAME/global-stock-tracker.git
+cd global-stock-tracker
+
+    Create and activate a virtual environment
+
+python -m venv stocks
+source stocks/bin/activate  # On Windows: stocks\Scripts\activate
+
+    Install dependencies
+
+pip install -r requirements.txt
+
+    Add your credentials
+
+Place your Google Sheets API JSON in config/credentials.json.
+🚀 Running the Pipeline
+
+python main.py
+
+This script will:
+
+    Scrape tickers from each index
+
+    Fetch historical stock prices (starting from 2024-04-03)
+
+    Publish prices to individual tabs in your connected Google Sheet
+
+📊 Coming Soon
+
+    analysis.py: Analyze top/bottom performers
+
+    Scheduled automation with Power Automate / Task Scheduler
+
+    Visual dashboards with Google Data Studio or Streamlit
+
+🔒 Notes
+
+    Your credentials (credentials.json) are ignored by git via .gitignore
+
+    Be sure to share access to your GSheet with the service account email
+
+🤝 License
+
+MIT License.
+
+
+---
