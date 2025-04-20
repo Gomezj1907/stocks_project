@@ -19,6 +19,8 @@ This Python project tracks the performance of stocks across major global indices
 
 ## 🔧 Project Structure
 
+
+```bash
 .
 ├── main.py                       # Main script to scrape and publish
 ├── scraping/                    # Individual modules to scrape index tickers
@@ -38,24 +40,25 @@ This Python project tracks the performance of stocks across major global indices
 ├── .gitignore
 ├── README.md
 └── requirements.txt             # Dependencies
+```
 
 ⚙️ Setup
 
-    Clone the repo
+Clone the repo
 
-git clone https://github.com/YOUR_USERNAME/global-stock-tracker.git
-cd global-stock-tracker
+    git clone https://github.com/YOUR_USERNAME/global-stock-tracker.git
+    cd global-stock-tracker
 
-    Create and activate a virtual environment
+Create and activate a virtual environment
 
-python -m venv stocks
-source stocks/bin/activate  # On Windows: stocks\Scripts\activate
+    python -m venv stocks
+    source stocks/bin/activate  # On Windows: stocks\Scripts\activate
 
-    Install dependencies
+Install dependencies
 
-pip install -r requirements.txt
+    pip install -r requirements.txt
 
-    Add your credentials
+Add your credentials
 
 Place your Google Sheets API JSON in config/credentials.json.
 🚀 Running the Pipeline
@@ -64,11 +67,11 @@ python main.py
 
 This script will:
 
-    Scrape tickers from each index
+1. Scrape tickers from each index
 
-    Fetch historical stock prices (starting from 2024-04-03)
+2. Fetch historical stock prices (starting from 2024-04-03)
 
-    Publish prices to individual tabs in your connected Google Sheet
+3. Publish prices to individual tabs in your connected Google Sheet
 
 📊 Coming Soon
 
@@ -80,9 +83,9 @@ This script will:
 
 🔒 Notes
 
-    Your credentials (credentials.json) are ignored by git via .gitignore
+Your credentials (credentials.json) are ignored by git via .gitignore
 
-    Be sure to share access to your GSheet with the service account email
+Be sure to share access to your GSheet with the service account email
 
 🤝 License
 
