@@ -21,7 +21,7 @@ This Python project tracks the performance of stocks across major global indices
 
 
 ```bash
-.
+
 ├── main.py                       # Main script to scrape and publish
 ├── scraping/                    # Individual modules to scrape index tickers
 │   ├── scrape_dow_jones.py
@@ -30,13 +30,15 @@ This Python project tracks the performance of stocks across major global indices
 ├── sheets/
 │   └── upload_to_sheets.py      # Publishes dataframes to Google Sheets
 ├── services/
-│   └── fetch_prices.py          # Gets historical price data
+│   └── consult_yfinance.py          # Gets historical price data
 ├── utils/
-│   └── analysis_utils.py        # Tools for calculating returns, rankings
+│   └── json_writer.py        # code that updates tickers json
+│   └── analysis.py        # Tools for calculating returns, rankings
 ├── data/
 │   └── tickers_por_pais.json    # Contains index tickers by country
 ├── config/
 │   └── credentials.json         # GSheets service credentials (ignored)
+│   └── settings.py        # Include sheet key
 ├── .gitignore
 ├── README.md
 └── requirements.txt             # Dependencies
