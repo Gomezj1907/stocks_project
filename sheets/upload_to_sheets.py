@@ -10,35 +10,26 @@ credentials = ServiceAccountCredentials.from_json_keyfile_name("config/credentia
 
 
 def publish_to_gsheets(df, sheet_tab):
-
-    # Autenticación
+    
     """
     Publishes a DataFrame to a specified Google Sheets worksheet.
-
-    This function takes a Pandas DataFrame and uploads it to a specified
-    worksheet in a Google Sheets document. If the worksheet does not exist,
-    it will create a new one with default dimensions.
-
-    :param df: The Pandas DataFrame to be published to the Google Sheets.
-    :param sheet_tab: The name of the worksheet tab where the DataFrame should be published.
+    If the sheet exists, it clears it before writing.
+    If the sheet does not exist, it creates one.
     """
-
     gc = gs.authorize(credentials)
-
-# Abrir la hoja
-     
-    spreadsheet = gc.open_by_key(GSHEET_KEY)
+    spreadsheet = gc.open_by_key(GSHEET_KEY)  # cambia a tu variable si usas otra forma
+    
     try:
-        worksheet = spreadsheet.worksheet(sheet_tab)  # Cambia esto al nombre de la hoja
-        set_with_dataframe(worksheet, df)
-
+        worksheet = spreadsheet.worksheet(sheet_tab)
+        worksheet.clear()  # limpia todo antes de escribir
+        print(f"📄 Sheet '{sheet_tab}' found and cleared.")
         
     except gs.exceptions.WorksheetNotFound:
-        # dimensiones arbitrarias; ajústalas si necesitas más filas/columnas
         worksheet = spreadsheet.add_worksheet(title=sheet_tab, rows="1000", cols="20")
-        
-        set_with_dataframe(worksheet, df)
+        print(f"🆕 Sheet '{sheet_tab}' created.")
 
+    set_with_dataframe(worksheet, df)
+    print(f"✅ Data published to Google Sheets tab '{sheet_tab}'")
 
 
 if __name__ == "__main__":
