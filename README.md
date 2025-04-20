@@ -48,7 +48,7 @@ This Python project tracks the performance of stocks across major global indices
 
 Clone the repo
 
-    git clone https://github.com/YOUR_USERNAME/global-stock-tracker.git
+    git clone https://github.com/Gomezj1907/global-stock-tracker.git
     cd global-stock-tracker
 
 Create and activate a virtual environment
