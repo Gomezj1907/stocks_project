@@ -7,6 +7,7 @@ New-Item -ItemType Directory -Path "data"
 New-Item -ItemType Directory -Path "analysis"
 New-Item -ItemType Directory -Path "sheets"
 New-Item -ItemType Directory -Path "config"
+New-Item -ItemType Directory -Path "utils"
 
 # Crear archivos base vacíos
 New-Item -ItemType File -Path "main.py"
