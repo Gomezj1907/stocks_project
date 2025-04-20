@@ -12,6 +12,7 @@ venv/
 
 # Credentials
 config/credentials.json
+config/settings.py
 
 # OS
 .DS_Store

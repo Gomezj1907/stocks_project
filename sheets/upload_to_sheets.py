@@ -2,6 +2,7 @@ import gspread as gs
 from oauth2client.service_account import ServiceAccountCredentials
 import pandas as pd
 from gspread_dataframe import get_as_dataframe, set_with_dataframe
+from config.settings import GSHEET_KEY
 
 scope = ["https://spreadsheets.google.com/feeds", "https://www.googleapis.com/auth/drive"]
 credentials = ServiceAccountCredentials.from_json_keyfile_name("config/credentials.json", scope)
@@ -26,7 +27,7 @@ def publish_to_gsheets(df, sheet_tab):
 
 # Abrir la hoja
      
-    spreadsheet = gc.open_by_key("1KgFj0UpYmvfmxD0d2l44YMP_CBwzpQWKcVl_pG98Ch0")
+    spreadsheet = gc.open_by_key(GSHEET_KEY)
     try:
         worksheet = spreadsheet.worksheet(sheet_tab)  # Cambia esto al nombre de la hoja
         set_with_dataframe(worksheet, df)
