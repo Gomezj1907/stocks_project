@@ -1,13 +1,13 @@
 import pandas as pd
 import json
 from datetime import datetime
-from scraping import scrape_dow_jones
-from scraping import scrape_sp500
-from scraping import scrape_ftse_100
-from scraping import scrape_hanseng
-from scraping import scrape_nikkei
-from scraping import scrape_sti
 
+from scraping.dow_jones import scrape_dow_jones
+from scraping.sp500 import scrape_sp500
+from scraping.ftse import scrape_ftse_100
+from scraping.hanseng import scrape_hanseng
+from scraping.nikkei import scrape_nikkei
+from scraping.sti import scrape_sti
 from services import fetch_prices
 
 from sheets.upload_to_sheets import publish_to_gsheets
