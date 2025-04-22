@@ -8,7 +8,7 @@ from scraping.ftse import scrape_ftse_100
 from scraping.hanseng import scrape_hanseng
 from scraping.nikkei import scrape_nikkei
 from scraping.sti import scrape_sti
-from services import fetch_prices
+from services.consult_yfinance import fetch_prices
 
 from sheets.upload_to_sheets import publish_to_gsheets
 
@@ -53,7 +53,7 @@ def main():
                 
                 # publish to gsheets
                 publish_to_gsheets(prices_df, sheet_tab)
-                print(f"✅ Data published to Google Sheets in tab '{sheet_tab}'")
+                print(f"✅ Data published to Google Sheets in tab '{sheet_tab}' up to '{end_date}'")
 
 
             except Exception as e:
