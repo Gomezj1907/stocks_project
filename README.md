@@ -65,15 +65,19 @@ Add your credentials
 Place your Google Sheets API JSON in config/credentials.json.
 🚀 Running the Pipeline
 
-python main.py
+    python main.py
 
 This script will:
 
 1. Scrape tickers from each index
 
-2. Fetch historical stock prices (starting from 2024-04-03)
+2. Store metadata in PostgreSQL (e.g., name, sector, index, country)
 
-3. Publish prices to individual tabs in your connected Google Sheet
+3. Save tickers to a JSON file by country/index
+
+4. Fetch historical stock prices (starting from 2024-04-03)
+
+5. Publish prices to individual tabs in your connected Google Sheet
 
 📊 Coming Soon
 
@@ -88,6 +92,8 @@ This script will:
 Your credentials (credentials.json) are ignored by git via .gitignore
 
 Be sure to share access to your GSheet with the service account email
+
+Ensure your PostgreSQL instance is running and accessible via connect.py
 
 🤝 License
 

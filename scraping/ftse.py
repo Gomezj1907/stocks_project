@@ -2,7 +2,7 @@ import requests as r
 from bs4 import BeautifulSoup 
 import pandas as pd
 from utils.json_writer import update_json
-
+from data.connection import connect_db
 
 def scrape_ftse_100():
     
@@ -37,15 +37,36 @@ def scrape_ftse_100():
 
     ftse_100 = pd.DataFrame(data, columns=headers)
 
-    ftse_100.head()
-
-
-    # Append .L to all tickers
+    # Clean and format
+    
     ftse_100['Ticker'] = ftse_100['Ticker'] + '.L'
-    tickers = ftse_100["Ticker"].tolist()    
-    return tickers
+    ftse_100['name'] = ftse_100['Company']
+    ftse_100['sector'] = ftse_100['FTSE industry classification benchmark sector[28]']
+    ftse_100["country"] = "United Kingdom"
+    ftse_100["source_index"] = "FTSE 100"
 
+    return ftse_100[["Ticker", "name", "sector", "country", "source_index"]]
+
+    
+def insert_metadata(df, con):
+    
+    cursor = con.cursor()
+    for _, row in df.iterrows():
+        cursor.execute("""
+                       INSERT INTO tickers_metadata (ticker, name, sector, country, source_index)
+                       VALUES (%s, %s, %s, %s, %s)
+                       ON CONFLICT (ticker) DO NOTHING;
+                       """, (row['Ticker'], row['name'], row['sector'], row['country'], row['source_index']))
+    con.commit()
+    cursor.close()
+        
 if __name__ == "__main__":
-    tickers = scrape_ftse_100()
-    update_json({"United Kingdom": {"FTSE 100": tickers}})
+    df = scrape_ftse_100()
+    con = connect_db()
+    update_json({"United Kingdom": {"FTSE 100": df['Ticker'].tolist()}})
     print(f"✅ FTSE 100 tickers updated in JSON.")
+    insert_metadata(df, con)
+    con.close()
+    print(f"✅ FTSE 100 metadata inserted into database.")
+    
+    
