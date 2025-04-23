@@ -2,6 +2,9 @@ import requests as r
 from bs4 import BeautifulSoup 
 import pandas as pd
 from utils.json_writer import update_json
+from data.connection import connect_db
+
+
 
 def scrape_dow_jones():
 
@@ -37,13 +40,30 @@ def scrape_dow_jones():
     djia.head()
 
     djia.rename(columns={"Symbol": "Ticker"}, inplace=True)
+    djia['name'] = djia['Company']
+    djia['sector'] = djia['Industry']
+    djia['country'] = 'United States'
+    djia["source_index"] = "Dow Jones Industrial Average"
 
-    tickers = djia["Ticker"].tolist()
+    return djia[['Ticker', 'name', 'sector', 'country', 'source_index']]
 
-    return tickers
-
+def insert_metadata(df, con):
+    
+    cursor = con.cursor()
+    for _, row in df.iterrows():
+        cursor.execute("""
+                       INSERT INTO tickers_metadata (ticker, name, sector, country, source_index)
+                       VALUES (%s, %s, %s, %s, %s)
+                       ON CONFLICT (ticker) DO NOTHING;
+                       """, (row['Ticker'], row['name'], row['sector'], row['country'], row['source_index']))
+    con.commit()
+    cursor.close()
 
 if __name__ == "__main__":
-    tickers = scrape_dow_jones()
-    update_json({"United States1": {"Dow Jones": tickers}})
-    print(f"✅ Dow Jones tickers updated in JSON.")
+    df = scrape_dow_jones()
+    con = connect_db()
+    update_json({"United States1": {"Dow Jones": df['Ticker'].tolist()}})
+    print("✅ Dow Jones tickers updated in JSON.")
+    insert_metadata(df, con)
+    con.colose()
+    print("✅ Dow Jones metadata inserted into database.")
