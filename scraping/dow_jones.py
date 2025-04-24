@@ -27,13 +27,15 @@ def scrape_dow_jones():
     rows = components_table.find_all("tr")
     headers = [th.text.strip() for th in rows[0].find_all("th")]
 
-    headers.pop(0)
 
     data = []
     for row in rows[1:]:
+        company_cell = row.find('th')
         cols = row.find_all('td')
-        if cols:
-            data.append([td.text.strip() for td in cols])
+        
+        if company_cell and cols:
+            row_data = [company_cell.text.strip()] + [td.text.strip() for td in cols]
+            data.append(row_data)
 
     djia = pd.DataFrame(data, columns=headers)
 
@@ -48,7 +50,24 @@ def scrape_dow_jones():
     return djia[['Ticker', 'name', 'sector', 'country', 'source_index']]
 
 def insert_metadata(df, con):
-    
+        
+    """
+    Inserts metadata from a DataFrame into the tickers_metadata table in the database.
+
+    Parameters
+    ----------
+    df : pandas.DataFrame
+        DataFrame containing metadata with columns: 'Ticker', 'name', 'sector', 'country', 'source_index'.
+    con : psycopg2.extensions.connection
+        Connection object to the PostgreSQL database.
+
+    Notes
+    -----
+    - This function uses a SQL INSERT statement with ON CONFLICT to avoid inserting duplicate tickers.
+    - The database connection is committed after all rows are inserted.
+    - The cursor is closed after the operation is complete.
+    """
+
     cursor = con.cursor()
     for _, row in df.iterrows():
         cursor.execute("""
@@ -65,5 +84,5 @@ if __name__ == "__main__":
     update_json({"United States1": {"Dow Jones": df['Ticker'].tolist()}})
     print("✅ Dow Jones tickers updated in JSON.")
     insert_metadata(df, con)
-    con.colose()
+    con.close()
     print("✅ Dow Jones metadata inserted into database.")
