@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import pandas as pd
 from utils.json_writer import update_json
 import re
+from data.connection import connect_db
 
 
 def scrape_hanseng():
@@ -43,19 +44,44 @@ def scrape_hanseng():
     hanseng.head()
 
     # Limpieza de caracteres invisibles y espacios
-    hanseng['Ticker'] = hanseng['Ticker'].apply(lambda x: re.sub(r'\s+', '', x.replace('SEHK:', '')))    
+    hanseng['Ticker'] = hanseng['Ticker'].apply(lambda x: re.sub(r'\s+', '', x.replace('SEHK:', '')))   
+    hanseng['name'] = hanseng['Name']
+    hanseng['sector'] = hanseng['Sub-index']
+    hanseng['country'] = 'Hong Kong'
+    hanseng['source_index'] = 'Hang Seng Index'
     hanseng.head()
 
     hanseng['Ticker'] = hanseng['Ticker']+'.HK'
     # Add preceding 0 to complete 4 digits before .HK
     hanseng['Ticker'] = hanseng['Ticker'].apply(lambda x: x.zfill(7))
     
-  
-    tickers = hanseng["Ticker"].tolist() 
-    return tickers
+    
+    return hanseng[["Ticker", "name", "sector", "country", "source_index"]]
+
+
+
+def insert_metadata(df, con):
+    
+    cursor = con.cursor()
+    for _, row in df.iterrows():
+        cursor.execute("""INSERT INTO tickers_metadata (ticker, name, sector, country, source_index)
+                       VALUES (%s, %s, %s, %s, %s)  
+                       ON CONFLICT (ticker) DO NOTHING;
+                       """, (row['Ticker'], row['name'], row['sector'], row['country'], row['source_index']))
+    con.commit()
+    cursor.close()
+
+
+
+
+
 
 
 if __name__ == "__main__":
-    tickers = scrape_hanseng()
-    update_json({"Hong Kong": {"Hang Seng": tickers}})
+    df = scrape_hanseng()
+    con = connect_db()
+    update_json({"Hong Kong": {"Hang Seng": df['Ticker'].tolist()}})
     print(f"✅ Hang Seng tickers updated in JSON.")
+    insert_metadata(df, con)
+    con.close()
+    print(f"✅ Hang Seng metadata inserted into database.")
