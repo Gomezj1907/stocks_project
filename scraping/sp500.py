@@ -2,7 +2,7 @@ import requests as r
 from bs4 import BeautifulSoup 
 import pandas as pd
 from utils.json_writer import update_json
-
+from data.connection import connect_db
 
 def scrape_sp500():
     
@@ -39,14 +39,33 @@ def scrape_sp500():
 
     sp500.rename(columns={"Symbol": "Ticker"}, inplace=True)
     sp500["Ticker"] = sp500["Ticker"].str.replace(".B", "-B")
-
-    tickers = sp500["Ticker"].tolist()
+    sp500["name"] = sp500["Security"]
+    sp500["sector"] = sp500["GICS Sector"]
+    sp500["country"] = "United States"
+    sp500["source_index"] = "S&P500"
     
-    return tickers
+    
+    return sp500[["Ticker", "name", "sector", "country", "source_index"]]
 
-
+def insert_metadata(df, con):
+    
+    cursor = con.cursor()
+    for _, row in df.iterrows():
+        cursor.execute("""
+                       INSERT INTO tickers_metadata (ticker, name, sector, country, source_index)
+                       VALUES (%s, %s, %s, %s, %s)
+                       ON CONFLICT (ticker) DO NOTHING;
+                       """, (row['Ticker'], row['name'], row['sector'], row['country'], row['source_index']))
+    con.commit()
+    cursor.close()
+    
+    
+    
 if __name__ == "__main__":
-    tickers = scrape_sp500()
-    print(tickers)
-    #update_json({"United States2": {"S&P500": tickers}})
+    df = scrape_sp500()
+    update_json({"United States2": {"S&P500": df["Ticker"].tolist()}})
     print(f"✅ S&P500 tickers updated in JSON.")
+    con = connect_db()
+    insert_metadata(df, con)
+    con.close()
+    print(f"✅ S&P500 metadata inserted into database.")
